@@ -1,0 +1,87 @@
+<!doctype html>
+<!-- Liquid Glass lab: every glass variant over moving content, light and dark, with live tuning. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ios-kit · Liquid Glass</title>
+<link rel="stylesheet" href="ios-kit.css">
+<style>
+  body { margin: 0; background: #1a1a1c; color: #ddd; font: 13px system-ui; display: flex; gap: 28px; padding: 28px; flex-wrap: wrap; align-items: flex-start; }
+  .stage { position: relative; width: 440px; height: 620px; overflow: hidden; border-radius: 40px; flex: none; }
+  .scene { position: absolute; left: 0; right: 0; top: 0; padding: 20px 16px; animation: drift 14s ease-in-out infinite alternate; }
+  .stage.still .scene { animation: none; }
+  @keyframes drift { to { transform: translateY(-560px); } }
+  .scene .photo { height: 210px; border-radius: 18px; margin: 18px 0;
+    background: radial-gradient(circle at 25% 30%, #ffcf4a 0 14%, transparent 15%), radial-gradient(circle at 70% 65%, #3d7bff 0 22%, transparent 23%),
+      linear-gradient(135deg, #ff5f6d, #ffc371 40%, #47e891 70%, #2a8cff); }
+  .scene .stripes { height: 120px; margin: 18px -16px; background: repeating-linear-gradient(90deg, var(--label) 0 2px, transparent 2px 22px), repeating-linear-gradient(0deg, var(--label) 0 2px, transparent 2px 22px); opacity: .5; }
+  .scene p { font: 17px/24px system-ui; margin: 0 0 12px; }
+  .scene h2 { font: 700 28px/34px system-ui; margin: 10px 0; }
+  .float { position: absolute; z-index: 5; }
+  .tune { width: 300px; display: grid; gap: 10px; }
+  .tune label { display: grid; grid-template-columns: 90px 1fr 40px; gap: 8px; align-items: center; }
+  .tune h3 { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: #888; margin: 6px 0 0; }
+  .tune button { font: inherit; color: #ddd; background: #2c2c2e; border: 0; border-radius: 8px; padding: 6px 10px; cursor: pointer; }
+</style>
+<script type="module" src="ios-kit.js"></script>
+</head>
+<body>
+<template id="scene">
+  <div class="scene">
+    <h2>Liquid Glass</h2>
+    <p>Content bends as it nears the rim of each glass shape. Drag the controls to tune the lens.</p>
+    <div class="photo"></div>
+    <p>Glass sits on controls and navigation, never on content. It should stay legible over anything that scrolls beneath it.</p>
+    <div class="stripes"></div>
+    <p>Interactive glass presses with a spring and glows from the touch point. Panels hold menus and sheets.</p>
+    <div class="photo" style="filter:hue-rotate(140deg)"></div>
+    <p>Scroll content drifts behind the shapes so the lens has something to bend.</p>
+    <div class="stripes"></div>
+    <div class="photo" style="filter:hue-rotate(260deg)"></div>
+  </div>
+</template>
+
+<div class="stage ios ios-light" id="light"></div>
+<div class="stage ios ios-dark" id="dark"></div>
+
+<div class="tune">
+  <h3>Lens</h3>
+  <label>Bezel <input type="range" id="bezel" min="0" max="40" value="0"><span></span></label>
+  <label>Refraction <input type="range" id="refract" min="0" max="90" value="0"><span></span></label>
+  <label>Blur <input type="range" id="blur" min="0" max="12" step=".5" value="0"><span></span></label>
+  <h3>Scene</h3>
+  <div><button id="pause">Pause</button> <button id="fallback">Fallback look</button></div>
+  <div style="color:#888;line-height:1.5">0 = automatic (sized from the shape). Refraction needs Chromium; other browsers get blur + saturate.</div>
+</div>
+
+<script type="module">
+import IOS from './ios-kit.js'
+const tpl = document.getElementById('scene')
+for (const stage of document.querySelectorAll('.stage')) {
+  stage.style.background = 'var(--bg)'
+  stage.append(tpl.content.cloneNode(true))
+  const add = (html, style) => { const t = document.createElement('div'); t.innerHTML = html; const el = t.firstElementChild; el.classList.add('float'); el.style.cssText += style; stage.append(el); return el }
+  add(`<ios-glass shape="circle" interactive>${IOS.icon('chevron.left', 'ios-btn-glyph')}</ios-glass>`, 'left:12px;top:24px')
+  add(`<ios-glass shape="circle" interactive>${IOS.icon('ellipsis', 'ios-btn-glyph')}</ios-glass>`, 'right:12px;top:24px')
+  add(`<ios-glass shape="capsule" interactive class="ios-pill">${IOS.icon('waveform')} Capsule</ios-glass>`, 'left:20px;top:120px')
+  add(`<ios-glass shape="capsule" interactive style="width:120px;height:120px;border-radius:60px;--lg-r:60px"></ios-glass>`, 'right:30px;top:200px')
+  add(`<ios-glass shape="panel" style="width:260px;height:150px;display:block;padding:18px;font:15px/20px system-ui">Panel glass</ios-glass>`, 'left:20px;top:340px')
+  add(`<ios-glass shape="composer" interactive style="display:flex;align-items:center;height:56px;padding:0 20px;font:17px system-ui;color:var(--label3)">Search</ios-glass>`, 'left:20px;right:20px;bottom:30px')
+}
+const all = () => document.querySelectorAll('.lg')
+for (const id of ['bezel', 'refract', 'blur']) {
+  const input = document.getElementById(id)
+  input.addEventListener('input', () => {
+    input.nextElementSibling.textContent = input.value
+    for (const el of all()) { +input.value ? el.setAttribute(id, input.value) : el.removeAttribute(id); IOS.refresh(el) }
+  })
+}
+document.getElementById('pause').onclick = (e) => { for (const s of document.querySelectorAll('.stage')) s.classList.toggle('still'); e.target.textContent = e.target.textContent === 'Pause' ? 'Play' : 'Pause' }
+document.getElementById('fallback').onclick = (e) => {
+  for (const el of all()) { el.classList.toggle('lg-fallback'); const fx = el.querySelector('.lg-fx'); fx.style.backdropFilter = fx.style.webkitBackdropFilter = ''; IOS.refresh(el) }
+}
+if (new URLSearchParams(location.search).has('still')) for (const s of document.querySelectorAll('.stage')) { s.classList.add('still'); s.querySelector('.scene').style.transform = `translateY(-${new URLSearchParams(location.search).get('still') || 0}px)` }
+</script>
+</body>
+</html>

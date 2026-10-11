@@ -1,0 +1,354 @@
+/*
+  ios-kit: iOS 26 (Liquid Glass) in the browser, for prototyping native app UI.
+  PROTOTYPE toolkit. 1 CSS px = 1 pt. See README.md.
+*/
+
+/* ───────────── Theme tokens (iOS 26 system colours) ───────────── */
+.ios-light, ios-phone, ios-phone[theme="light"] {
+  color-scheme: light;
+  --bg: #fff;
+  --bg2: #f2f2f7;               /* secondarySystemBackground */
+  --bg3: #fff;                  /* tertiarySystemBackground */
+  --grouped: #f2f2f7;           /* systemGroupedBackground */
+  --grouped2: #fff;
+  --label: #000;
+  --label2: rgba(60, 60, 67, .6);
+  --label3: rgba(60, 60, 67, .3);
+  --label4: rgba(60, 60, 67, .18);
+  --placeholder: rgba(60, 60, 67, .3);
+  --sep: rgba(60, 60, 67, .29);
+  --sep-opaque: #c6c6c8;
+  --fill: rgba(120, 120, 128, .2);
+  --fill2: rgba(120, 120, 128, .16);
+  --fill3: rgba(118, 118, 128, .12);
+  --fill4: rgba(116, 116, 128, .08);
+  --primary-12: rgba(0, 0, 0, .12);
+  --primary-14: rgba(0, 0, 0, .14);
+  --blue: #0088ff;
+  --orange: #ff8d28;
+  --red: #ff383c;
+  --green: #34c759;
+  --purple: #cb30e0;
+  --band: rgba(0, 0, 0, .025);
+  --kw: rgb(200, 61, 139);
+  --str: rgb(25, 139, 67);
+  --cmt: rgb(97, 102, 110);
+  --type: rgb(82, 48, 194);
+  --dim: rgba(0, 0, 0, .35);
+  /* Liquid Glass */
+  --glass-tint: rgba(255, 255, 255, .62);
+  --glass-tint-strong: rgba(255, 255, 255, .78);
+  --glass-rim: rgba(255, 255, 255, .9);
+  --glass-rim2: rgba(255, 255, 255, .55);
+  --glass-edge: rgba(0, 0, 0, .05);
+  --glass-shadow: 0 4px 28px rgba(0, 0, 0, .085), 0 1px 3px rgba(0, 0, 0, .03);
+  --glass-shadow-lg: 0 10px 50px rgba(0, 0, 0, .14), 0 2px 8px rgba(0, 0, 0, .04);
+  --glass-glow: rgba(255, 255, 255, .7);
+  --glass-sat: 1.7;
+  --glass-bright: 1.08;
+  --sheet-bg: rgba(255, 255, 255, .86);
+  --sheet-scrim: rgba(0, 0, 0, .2);
+  --menu-bg: rgba(250, 250, 252, .74);
+  --kbd: #e2e4e8;
+  --kbd-key: #fff;
+}
+.ios-dark, ios-phone[theme="dark"] {
+  color-scheme: dark;
+  --bg: #000;
+  --bg2: #1c1c1e;
+  --bg3: #2c2c2e;
+  --grouped: #000;
+  --grouped2: #1c1c1e;
+  --label: #fff;
+  --label2: rgba(235, 235, 245, .6);
+  --label3: rgba(235, 235, 245, .3);
+  --label4: rgba(235, 235, 245, .16);
+  --placeholder: rgba(235, 235, 245, .3);
+  --sep: rgba(84, 84, 88, .6);
+  --sep-opaque: #38383a;
+  --fill: rgba(120, 120, 128, .36);
+  --fill2: rgba(120, 120, 128, .32);
+  --fill3: rgba(118, 118, 128, .24);
+  --fill4: rgba(118, 118, 128, .18);
+  --primary-12: rgba(255, 255, 255, .12);
+  --primary-14: rgba(255, 255, 255, .14);
+  --blue: #0091ff;
+  --orange: #ff9230;
+  --red: #ff4245;
+  --green: #30d158;
+  --purple: #db34f2;
+  --band: rgba(255, 255, 255, .035);
+  --kw: rgb(247, 153, 198);
+  --str: rgb(150, 227, 166);
+  --cmt: rgb(140, 148, 158);
+  --type: rgb(158, 153, 247);
+  --dim: rgba(0, 0, 0, .35);
+  --glass-tint: rgba(255, 255, 255, .095);
+  --glass-tint-strong: rgba(255, 255, 255, .075);
+  --glass-rim: rgba(255, 255, 255, .2);
+  --glass-rim2: rgba(255, 255, 255, .075);
+  --glass-edge: rgba(255, 255, 255, .06);
+  --glass-shadow: 0 4px 24px rgba(0, 0, 0, .35);
+  --glass-shadow-lg: 0 10px 50px rgba(0, 0, 0, .55);
+  --glass-glow: rgba(255, 255, 255, .22);
+  --glass-sat: 1.5;
+  --glass-bright: 1.0;
+  --sheet-bg: rgba(31, 31, 33, .93);
+  --sheet-scrim: rgba(0, 0, 0, .48);
+  --menu-bg: rgba(40, 40, 42, .7);
+  --kbd: #1f1f21;
+  --kbd-key: #47474a;
+}
+
+/* ───────────── Type (SF Pro via the system stack) ─────────────
+   system-ui gets SF Pro with CoreText's optical sizing and tracking, so no
+   manual letter-spacing. Chromium doesn't map ui-monospace to SF Mono; run
+   tools/link-fonts.sh to serve the system copy. */
+@font-face { font-family: "Kit SF Mono"; src: local("SF Mono"), local("SFMono-Regular"), url("fonts/SFNSMono.ttf") format("truetype"); font-weight: 100 900; }
+.ios, ios-phone {
+  --sf: system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+  --mono: "Kit SF Mono", ui-monospace, Menlo, monospace;
+  font-family: var(--sf);
+  -webkit-font-smoothing: antialiased;
+  font-kerning: normal;
+  text-rendering: optimizeLegibility;
+  color: var(--label);
+}
+ios-phone, .ios { --hairline: .3334; }
+ios-phone :is(h1, h2, h3, h4, h5, h6, p, ol, ul, blockquote, pre, table), .ios :is(h1, h2, h3, h4, h5, h6, p, ol, ul, blockquote, pre, table) { text-transform: none; letter-spacing: normal; }
+ios-phone *, ios-phone *::before, ios-phone *::after, .ios *, .ios *::before, .ios *::after { box-sizing: border-box; }
+/* iOS text styles at the default Dynamic Type size, with Apple's tracking. */
+.t-large   { font-size: 34px; line-height: 41px; font-weight: 700; }
+.t-title1  { font-size: 28px; line-height: 34px; }
+.t-title2  { font-size: 22px; line-height: 28px; }
+.t-title3  { font-size: 20px; line-height: 25px; }
+.t-headline{ font-size: 17px; line-height: 22px; font-weight: 600; }
+.t-body    { font-size: 17px; line-height: 22px; }
+.t-callout { font-size: 16px; line-height: 21px; }
+.t-sub     { font-size: 15px; line-height: 20px; }
+.t-foot    { font-size: 13px; line-height: 18px; }
+.t-cap     { font-size: 12px; line-height: 16px; }
+.t-cap2    { font-size: 11px; line-height: 13px; }
+.secondary { color: var(--label2); }
+.tertiary  { color: var(--label3); }
+
+/* ───────────── Icons (SF Symbol approximations) ───────────── */
+.ios-icon { display: inline-block; width: 1em; height: 1em; flex: none; vertical-align: -.125em; overflow: visible; }
+.ios-icon * { vector-effect: non-scaling-stroke; }
+
+/* ───────────── Phone frame ───────────── */
+ios-phone { display: inline-block; position: relative; flex: none; }
+ios-phone .ios-device {
+  position: relative; padding: 14px; border-radius: 76px;
+  background: linear-gradient(145deg, #4a4a4e, #1c1c1e 40%, #3a3a3d 70%, #18181a);
+  box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.18), inset 0 0 0 6px #0c0c0d, 0 30px 80px rgba(0,0,0,.35);
+}
+ios-phone[bare] .ios-device { padding: 0; background: none; box-shadow: none; border-radius: 0; }
+ios-phone .ios-screen {
+  position: relative; width: 440px; height: 956px; overflow: hidden; border-radius: 62px;
+  background: var(--bg); isolation: isolate; contain: layout paint;
+}
+ios-phone[bare] .ios-screen { border-radius: 0; }
+.ios-statusbar {
+  position: absolute; z-index: 1000; left: 0; right: 0; top: 0; height: 54px; pointer-events: none;
+  display: flex; align-items: flex-start; justify-content: space-between; color: var(--label);
+}
+.ios-statusbar.on-dark { color: #fff; }
+.ios-statusbar.on-light { color: #000; }
+.ios-statusbar .time {
+  position: absolute; left: 61.5px; top: 21.5px; width: 45px; text-align: center;
+  font: 600 17.6px/22px var(--sf);
+}
+.ios-statusbar .icons { position: absolute; right: 40px; top: 25px; display: flex; gap: 6.5px; align-items: center; }
+.ios-statusbar svg { display: block; }
+.ios-island {
+  position: absolute; z-index: 1001; top: 11px; left: 50%; width: 126px; height: 37px; margin-left: -63px;
+  border-radius: 20px; background: #000; pointer-events: none;
+}
+.ios-home {
+  position: absolute; z-index: 1001; bottom: 8px; left: 50%; width: 146px; height: 5px; margin-left: -73px;
+  border-radius: 3px; background: var(--label); pointer-events: none;
+}
+ios-phone[bare] .ios-island, ios-phone[bare] .ios-home, ios-phone[no-island] .ios-island, ios-phone[no-home] .ios-home { display: none; }
+
+/* ───────────── Liquid Glass ─────────────
+   .lg is the glass surface; .lg-fx holds the backdrop (refraction in Chromium,
+   blur+saturate elsewhere); .lg-tint, .lg-rim and .lg-glow stack above it.     */
+.lg {
+  /* No isolation or blend modes here: either makes this a backdrop root and
+     the backdrop filter would see nothing behind the glass. */
+  position: relative; z-index: 0; border-radius: var(--lg-r, 22px);
+  box-shadow: var(--glass-shadow);
+  transition: transform .42s cubic-bezier(.3, 1.45, .45, 1), box-shadow .3s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.lg > .lg-fx, .lg > .lg-tint, .lg > .lg-rim, .lg > .lg-glow {
+  position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+}
+.lg > .lg-fx {
+  z-index: 0;
+  -webkit-backdrop-filter: blur(var(--lg-blur, 6px)) saturate(var(--glass-sat)) brightness(var(--glass-bright));
+  backdrop-filter: blur(var(--lg-blur, 6px)) saturate(var(--glass-sat)) brightness(var(--glass-bright));
+}
+.lg.lg-fallback > .lg-fx {
+  -webkit-backdrop-filter: blur(calc(var(--lg-blur, 6px) * 2.2)) saturate(var(--glass-sat)) brightness(var(--glass-bright));
+  backdrop-filter: blur(calc(var(--lg-blur, 6px) * 2.2)) saturate(var(--glass-sat)) brightness(var(--glass-bright));
+}
+.lg > .lg-tint { z-index: 0; background: var(--lg-tint, var(--glass-tint)); }
+.lg.lg-strong > .lg-tint { background: var(--glass-tint-strong); }
+/* Specular rim: bright where light hits (top-left, bottom-right), with a soft
+   inner edge glow and a hairline that keeps the shape on matching backgrounds. */
+.lg > .lg-rim {
+  z-index: 0;
+  box-shadow:
+    inset 0 0 0 .5px var(--glass-edge),
+    inset 1.2px 1.2px .4px -.6px var(--glass-rim),
+    inset -1.2px -1.2px .4px -.6px var(--glass-rim2),
+    inset 0 0 6px -2px var(--glass-rim2);
+}
+.lg > .lg-rim::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px;
+  background: conic-gradient(from 225deg at 50% 50%,
+    var(--glass-rim2) 0deg, var(--glass-rim) 45deg, var(--glass-rim2) 100deg,
+    transparent 140deg, transparent 180deg, var(--glass-rim2) 225deg,
+    var(--glass-rim) 260deg, var(--glass-rim2) 300deg, transparent 330deg, var(--glass-rim2) 360deg);
+  -webkit-mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  opacity: .9;
+}
+.ios-dark .lg > .lg-rim::before, ios-phone[theme="dark"] .lg > .lg-rim::before { opacity: .75; }
+.lg > .lg-glow {
+  z-index: 0; opacity: 0; transition: opacity .35s ease;
+  background: radial-gradient(circle at var(--px, 50%) var(--py, 50%), var(--glass-glow), transparent 70%);
+}
+.lg[interactive] { cursor: pointer; user-select: none; -webkit-user-select: none; }
+.lg[interactive].pressed { transform: scale(var(--lg-press, 1.12)); transition-duration: .22s; }
+.lg[interactive].pressed > .lg-glow { opacity: 1; }
+.lg > :where(:not(.lg-fx, .lg-tint, .lg-rim, .lg-glow)) { position: relative; z-index: 1; }
+
+/* Shapes */
+.lg-circle   { --lg-r: 999px; width: 44px; height: 44px; display: grid; place-items: center; --lg-press: 1.14; }
+.lg-capsule  { --lg-r: 999px; --lg-press: 1.06; }
+.lg-composer { --lg-r: 28px; --lg-press: 1.015; --lg-blur: 5px; }
+.lg-panel    { --lg-r: 28px; --lg-press: 1.0; --lg-blur: 14px; box-shadow: var(--glass-shadow-lg); }
+.lg-clear    { --lg-tint: transparent; --lg-blur: 1.5px; }
+
+/* <ios-glass> */
+ios-glass { display: inline-flex; align-items: center; justify-content: center; color: var(--label); }
+ios-glass[shape="circle"] { display: grid; }
+
+/* ───────────── Glass controls ───────────── */
+.ios-pill-target { display: inline-flex; padding: 5px 0; }
+.ios-pill {
+  height: 34px; padding: 0 14px; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;
+  font: 500 15px/20px var(--sf); color: var(--label);
+}
+.ios-pill .chev { color: var(--label2); font-size: 12px; display: inline-grid; }
+.ios-pill .lead { width: 18px; display: inline-grid; place-items: center; font-size: 15px; }
+.ios-pill .ios-activity-glyph { margin: 0 1.5px; }
+.ios-pill-row { display: flex; align-items: center; gap: 8px; }
+.ios-jump { width: 34px; height: 34px; --lg-r: 17px; display: grid; place-items: center; font-size: 16px; color: var(--label); }
+.ios-activity-glyph { width: var(--s); height: var(--s); display: inline-grid; grid-template-columns: repeat(5, 1fr); flex: none; }
+.ios-activity-glyph i { width: 62%; aspect-ratio: 1; margin: auto; border-radius: 50%; background: currentColor; animation: ios-dot 1.1s linear infinite; opacity: .16; }
+@keyframes ios-dot { 0% { opacity: 1; } 18% { opacity: .55; } 32% { opacity: .2; } 50%, 75% { opacity: .16; } 90% { opacity: .6; } 100% { opacity: 1; } }
+.ios-btn-glyph { font-size: 23.5px; color: var(--label); }
+
+/* ───────────── Sheet ───────────── */
+.ios-sheet-layer { position: absolute; inset: 0; z-index: 600; pointer-events: none; }
+.ios-sheet-layer.open { pointer-events: auto; }
+.ios-sheet-scrim { position: absolute; inset: 0; background: rgba(0, 0, 0, 0); transition: background .4s; }
+.ios-sheet-layer.open .ios-sheet-scrim { background: var(--sheet-scrim); }
+.ios-sheet {
+  position: absolute; left: 8.5px; right: 8.5px; bottom: 9px; height: calc(956px - 451px - 9px);
+  --lg-r: 44px; --lg-blur: 34px; border-radius: 44px; overflow: hidden; display: flex; flex-direction: column;
+  transform: translateY(110%); transition: transform .5s cubic-bezier(.32, .72, 0, 1), left .45s cubic-bezier(.32, .72, 0, 1), right .45s cubic-bezier(.32, .72, 0, 1), bottom .45s cubic-bezier(.32, .72, 0, 1), height .45s cubic-bezier(.32, .72, 0, 1), border-radius .45s;
+  box-shadow: 0 0 0 .5px var(--glass-edge), var(--glass-shadow-lg);
+}
+.ios-sheet > .lg-tint { background: var(--sheet-bg) !important; }
+.ios-sheet-layer.open .ios-sheet { transform: none; }
+.ios-sheet-layer.large .ios-sheet { left: 0; right: 0; bottom: 0; height: calc(956px - 70px); border-radius: 38px 38px 0 0; }
+.ios-sheet.dragging { transition: none; }
+.ios-grabber { position: absolute; top: 6px; left: 50%; margin-left: -18px; width: 36px; height: 5px; border-radius: 3px; background: var(--label3); z-index: 3; cursor: grab; }
+.ios-sheet-nav { flex: none; position: relative; height: 76px; display: flex; align-items: center; justify-content: center; padding-top: 10px; }
+.ios-sheet-nav h3 { margin: 0; font: 600 17px/22px var(--sf); color: var(--label); }
+.ios-sheet-nav .done {
+  position: absolute; right: 12px; top: 18px; height: 44px; padding: 0 16px; display: grid; place-items: center;
+  font: 600 17px/22px var(--sf); color: var(--label);
+}
+.ios-sheet-nav .close { position: absolute; left: 12px; top: 18px; }
+.ios-sheet-body { flex: 1; overflow-y: auto; scrollbar-width: none; padding: 0 0 40px; }
+.ios-sheet-body::-webkit-scrollbar { display: none; }
+
+/* Grouped lists (inset grouped, iOS 26 radii) */
+.ios-group-h { padding: 4.5px 38px 6.5px; font: 600 17px/22px var(--sf); color: var(--label2); }
+.ios-group { margin: 0 18px; border-radius: 26px; background: var(--fill4); overflow: hidden; }
+.ios-sheet .ios-group { background: color-mix(in srgb, var(--label) 7%, transparent); }
+.ios-cell { display: flex; align-items: center; gap: 16px; min-height: 50px; padding: 0 20px; position: relative; font: 17px/22px var(--sf); }
+.ios-cell + .ios-cell::before { content: ""; position: absolute; top: 0; left: 20px; right: 20px; height: 1px; background: var(--sep); transform: scaleY(var(--hairline)); transform-origin: top; }
+.ios-cell .val { margin-left: auto; color: var(--label2); }
+.ios-cell .chev { margin-left: auto; color: var(--label3); font-size: 14px; display: inline-grid; }
+.ios-cell .val + .chev { margin-left: -8px; }
+.ios-cell .ic { font-size: 22px; color: var(--label); width: 26px; display: grid; place-items: center; margin-right: -2px; }
+.ios-group-f { padding: 9px 38px 0; font: 12.7px/16px var(--sf); color: var(--label2); }
+.ios-group + .ios-group { margin-top: 36px; }
+
+/* ───────────── Menu ───────────── */
+.ios-menu-layer { position: absolute; inset: 0; z-index: 700; }
+.ios-menu {
+  position: absolute; width: 250px; --lg-r: 26px; padding: 8px 0; transform-origin: top right;
+  animation: ios-menu-in .38s cubic-bezier(.3, 1.3, .5, 1);
+}
+.ios-menu > .lg-tint { background: var(--menu-bg) !important; }
+.ios-menu.closing { animation: ios-menu-out .18s ease-in forwards; }
+@keyframes ios-menu-in { from { transform: scale(.2); opacity: 0; filter: blur(4px); } to { transform: none; opacity: 1; filter: none; } }
+@keyframes ios-menu-out { to { transform: scale(.6); opacity: 0; } }
+.ios-menu .m-h { padding: 4px 20px 6px; font: 13px/18px var(--sf); color: var(--label2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ios-menu .m-i {
+  display: flex; align-items: center; gap: 0; height: 42px; padding: 0 20px; font: 17px/22px var(--sf); cursor: pointer;
+  margin: 0 8px; padding: 0 12px; border-radius: 14px;
+}
+.ios-menu .m-i:hover { background: var(--fill4); }
+.ios-menu .m-i .ic { width: 22px; font-size: 18px; display: grid; place-items: center; margin-right: 15px; }
+.ios-menu .m-i .sub { margin-left: auto; font-size: 13px; color: var(--label); }
+.ios-menu .m-i.destructive { color: var(--red); }
+.ios-menu .m-sep { height: 0; border-top: .5px solid var(--sep); margin: 8px 24px; }
+
+/* ───────────── Alert ───────────── */
+.ios-alert-layer { position: absolute; inset: 0; z-index: 800; display: grid; place-items: center; background: rgba(0, 0, 0, .2); animation: ios-fade .2s; }
+.ios-alert { width: 300px; --lg-r: 34px; padding: 22px 20px 16px; text-align: center; animation: ios-alert-in .35s cubic-bezier(.3, 1.4, .5, 1); }
+.ios-alert > .lg-tint { background: var(--menu-bg) !important; }
+.ios-alert h4 { margin: 0; font: 600 17px/22px var(--sf); color: var(--label); }
+.ios-alert p { margin: 6px 0 0; font: 15px/20px var(--sf); color: var(--label); }
+.ios-alert .btns { display: flex; gap: 10px; margin-top: 20px; }
+.ios-alert .btns > * { flex: 1; height: 48px; display: grid; place-items: center; font: 600 17px/22px var(--sf); }
+.ios-alert .btns .lg-tint { background: var(--fill3) !important; }
+.ios-alert .btns .destructive { color: var(--red); }
+.ios-alert .btns .prominent { color: #fff; }
+.ios-alert .btns .prominent .lg-tint { background: var(--blue) !important; }
+@keyframes ios-fade { from { opacity: 0; } }
+@keyframes ios-alert-in { from { transform: scale(1.15); opacity: 0; } }
+
+/* ───────────── Keyboard (static illustration) ───────────── */
+.ios-keyboard {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 344px; z-index: 50; background: var(--kbd);
+  border-radius: 34px 34px 0 0; transform: translateY(102%); transition: transform .42s cubic-bezier(.32, .72, 0, 1); pointer-events: none;
+  padding-top: 51px;
+}
+.ios-keyboard.up { transform: none; }
+.ios-keyboard .sugg { position: absolute; left: 0; right: 0; top: 11px; display: flex; height: 26px; align-items: center; font: 17px/22px var(--sf); color: var(--label); }
+.ios-keyboard .sugg span { flex: 1; text-align: center; }
+.ios-keyboard .sugg span + span { border-left: 1px solid var(--label4); }
+.ios-keyboard .kr { display: flex; gap: 6.3px; height: 45px; margin-bottom: 11px; }
+.ios-keyboard .k { width: 37px; height: 45px; border-radius: 8.5px; background: var(--kbd-key); display: grid; place-items: center; font: 400 24px/1 var(--sf); color: var(--label); box-shadow: 0 1px 0 rgba(0, 0, 0, .12); }
+.ios-keyboard .k.w { width: 50px; }
+.ios-keyboard .k.w .ios-icon { font-size: 21px; }
+.ios-keyboard .k.wide { width: 102px; font-size: 17px; }
+.ios-keyboard .k.sp { width: 210px; }
+.ios-keyboard .k.ret { width: 102px; background: #007aff; color: #fff; font-size: 26px; }
+.ios-keyboard .kb-bottom { position: absolute; left: 0; right: 0; bottom: 22px; display: flex; justify-content: space-between; padding: 0 31px 0 27px; color: var(--label); }
+.ios-keyboard .kb-bottom .ios-icon { font-size: 30px; }
+.ios-keyboard .kb-bottom .emoji { font-size: 32px; }
+
+/* ───────────── Gallery helpers ───────────── */
+.ios-demo-bg { background: var(--bg); color: var(--label); }
+

@@ -1,0 +1,4 @@
+fonts/
+compare/
+*.png
+!docs/*.png

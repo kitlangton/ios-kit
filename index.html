@@ -1,0 +1,76 @@
+<!doctype html>
+<!-- Gallery: the system pieces in light and dark. Each button opens the real component on its phone. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ios-kit</title>
+<link rel="stylesheet" href="ios-kit.css">
+<style>
+  body { margin: 0; background: #111; display: flex; gap: 40px; padding: 40px; flex-wrap: wrap; align-items: flex-start; }
+  .app { position: absolute; inset: 0; padding: 64px 16px 0; background: var(--bg); color: var(--label); font: 17px/22px system-ui; }
+  .app h1 { font: 700 34px/41px system-ui; margin: 8px 4px 16px; }
+  .actions { display: grid; gap: 12px; margin-top: 8px; }
+  .actions ios-glass { height: 50px; display: flex; align-items: center; justify-content: center; font-weight: 600; }
+  .toolbar { position: absolute; left: 16px; right: 16px; bottom: 34px; display: flex; justify-content: space-between; }
+</style>
+<script type="module" src="ios-kit.js"></script>
+</head>
+<body>
+<template id="screen">
+  <div class="app">
+    <h1>Today</h1>
+    <div class="actions">
+      <ios-glass shape="capsule" interactive data-open="sheet">Sheet</ios-glass>
+      <ios-glass shape="capsule" interactive data-open="menu">Menu</ios-glass>
+      <ios-glass shape="capsule" interactive data-open="alert">Alert</ios-glass>
+      <ios-glass shape="capsule" interactive data-open="keyboard">Keyboard</ios-glass>
+    </div>
+    <div class="toolbar">
+      <ios-glass shape="circle" interactive data-open="menu" class="more"></ios-glass>
+      <ios-glass shape="circle" interactive class="add"></ios-glass>
+    </div>
+  </div>
+</template>
+
+<ios-phone theme="light" id="light"></ios-phone>
+<ios-phone theme="dark" id="dark"></ios-phone>
+
+<script type="module">
+import IOS from './ios-kit.js'
+const tpl = document.getElementById('screen')
+for (const phone of document.querySelectorAll('ios-phone')) {
+  const host = phone.screen
+  host.append(tpl.content.cloneNode(true))
+  host.querySelector('.more').insertAdjacentHTML('beforeend', IOS.icon('ellipsis', 'ios-btn-glyph'))
+  host.querySelector('.add').insertAdjacentHTML('beforeend', IOS.icon('plus', 'ios-btn-glyph'))
+  let keyboardUp = false
+  for (const button of host.querySelectorAll('[data-open]')) {
+    button.addEventListener('click', () => {
+      switch (button.dataset.open) {
+        case 'sheet':
+          return IOS.sheet(host, { title: 'Targets', body: IOS.groupedList([
+            { rows: [{ label: 'Calories', value: '2,100 kcal' }, { label: 'Protein', value: '170 g' }] },
+            { rows: [{ label: 'Goal pace', value: '−0.4 kg / wk', chevron: true }] },
+          ]) })
+        case 'menu':
+          return IOS.menu(button, { items: [
+            { label: 'Rename', icon: 'pencil' }, { label: 'Pin', icon: 'pin' }, '-',
+            { label: 'Delete', icon: 'trash', destructive: true },
+          ] })
+        case 'alert':
+          return IOS.alert(host, { title: 'Delete Workout?', message: 'Logged sets stay in Life Hub.', buttons: [
+            { label: 'Cancel', role: 'cancel' }, { label: 'Delete', role: 'destructive' },
+          ] })
+        case 'keyboard':
+          keyboardUp = !keyboardUp
+          return IOS.keyboard(host, keyboardUp)
+      }
+    })
+  }
+}
+const open = new URLSearchParams(location.search).get('open')
+if (open) for (const phone of document.querySelectorAll('ios-phone')) phone.screen.querySelector(`[data-open="${open}"]`)?.click()
+</script>
+</body>
+</html>
