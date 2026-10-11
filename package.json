@@ -1,0 +1,46 @@
+{
+  "name": "@kitlangton/ios-kit",
+  "version": "0.1.0",
+  "description": "iOS 26 (Liquid Glass) in the browser, for prototyping native app UI before building it",
+  "type": "module",
+  "license": "MIT",
+  "author": "Kit Langton",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kitlangton/ios-kit.git"
+  },
+  "homepage": "https://github.com/kitlangton/ios-kit#readme",
+  "keywords": [
+    "ios",
+    "liquid-glass",
+    "prototyping",
+    "web-components",
+    "mockup"
+  ],
+  "main": "./ios-kit.js",
+  "exports": {
+    ".": "./ios-kit.js",
+    "./ios-kit.js": "./ios-kit.js",
+    "./ios-kit.css": "./ios-kit.css",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "ios-kit.js",
+    "ios-kit.css",
+    "index.html",
+    "glass.html",
+    "tools/*.py",
+    "tools/*.ts",
+    "tools/*.sh",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": [
+    "./ios-kit.js",
+    "./ios-kit.css"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

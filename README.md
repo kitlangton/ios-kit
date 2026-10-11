@@ -3,6 +3,12 @@
 iOS 26 in the browser, for prototyping native app UI before building it in SwiftUI: a phone frame, Liquid Glass, sheets, menus, alerts and the keyboard. A plain ES module with light-DOM custom elements and no build step. 1 CSS px = 1 pt; the phone is an iPhone 17 Pro Max (440 × 956 pt).
 
 ```sh
+npm install @kitlangton/ios-kit     # or copy ios-kit.js and ios-kit.css; there's no build step
+```
+
+To run the demos from a checkout:
+
+```sh
 ./tools/link-fonts.sh               # once: serves this Mac's SF Mono (Chromium won't map ui-monospace)
 python3 -m http.server 4791         # then open http://127.0.0.1:4791/
 ```
@@ -105,3 +111,7 @@ On top sit a tint, a specular rim, an inner glow, a hairline edge and a soft sha
 ## Origin
 
 Extracted on 2026-10-10 from the OpenCode iOS app's `prototypes/ios-kit` (branch `ios-voice-ux`, including its uncommitted working state), which keeps its app-specific components (drawer, session, transcript, composer, settings) and parity references.
+
+## Releasing
+
+Bump `version` in `package.json`, then push a matching tag: `git tag v0.1.1 && git push origin main v0.1.1`. `.github/workflows/release.yml` publishes to npm through trusted publishing and creates the GitHub release.
